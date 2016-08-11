@@ -1,0 +1,21 @@
+{
+  "name": "empirical-client",
+  "version": "0.1.0",
+  "description": "Empirical Node Client",
+  "main": "index.js",
+  "scripts": {
+     "lint": "standard",
+    "test": "NODE_ENV=test mocha test/index.js",
+    "test-cli": "NODE_ENV=test mocha test/cli.js",
+    "test-cov": "NODE_ENV=test istanbul cover _mocha -- -u exports -R spec test/index.js"
+  },
+  "author": "alantrrs",
+  "dependencies": {
+    "node-fetch": "^1.6.0"
+  },
+  "devDependencies": {
+    "istanbul": "^0.4.4",
+    "mocha": "^3.0.2",
+    "standard": "^7.1.2"
+  }
+}
