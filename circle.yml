@@ -9,9 +9,9 @@ dependencies:
   override:
     - npm install
     - docker login -u $DOCKER_USER -p $DOCKER_PASS
-    - docker pull empiricalci/empirical
+    - docker run empiricalci/empirical
     - docker run  rethink
-    - ./docker-compose build emp-test
 test:
   override:
+    - npm run lint
     - npm run test-coverage
