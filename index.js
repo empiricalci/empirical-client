@@ -1,5 +1,6 @@
 
 var fetch = require('node-fetch')
+var httpError = require('http-errors')
 
 var host = 'https://empiricalci.com'
 var headers
@@ -25,7 +26,7 @@ exports.getProfile = function () {
   return fetch(`${host}/api/v1/profile`, {
     headers: headers
   }).then(function (response) {
-    if (!response.ok) return Promise.reject(new Error(response.statusText))
+    if (!response.ok) return Promise.reject(httpError(response.status, 'Failed to get profile'))
     return response.json()
   })
 }
@@ -43,7 +44,7 @@ exports.getExperiment = function (experimentId) {
   return fetch(`${host}/api/v1/x/${experimentId}`, {
     headers: headers
   }).then(function (response) {
-    if (!response.ok) return Promise.reject(new Error(`Failed to get experiment: ${response.statusText}`))
+    if (!response.ok) return Promise.reject(httpError(response.status, `Failed to get experiment: ${response.statusText}`))
     return response.json()
   })
 }
@@ -54,7 +55,7 @@ exports.createExperiment = function (payload) {
     headers: headers,
     body: JSON.stringify(payload)
   }).then(function (response) {
-    if (!response.ok) return Promise.reject(new Error(`Failed to create experiment: ${response.statusText}`))
+    if (!response.ok) return Promise.reject(httpError(response.status, `Failed to create experiment: ${response.statusText}`))
     return response.json()
   })
 }
@@ -65,16 +66,8 @@ exports.updateExperiment = function (experimentId, payload) {
     headers: headers,
     body: JSON.stringify(payload)
   }).then(function (response) {
-    if (!response.ok) return Promise.reject(new Error(`Failed to update experiment: ${response.status}`))
+    if (!response.ok) return Promise.reject(httpError(response.status, `Failed to update experiment: ${response.statusText}`))
     return response.json()
   })
 }
 
-exports.postResults = function (results) {
-  // TODO: Post results
-}
-
-exports.uploadWorkspace = function (params) {
-  // TODO: Upload workspace
-
-}

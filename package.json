@@ -4,13 +4,14 @@
   "description": "Empirical Node Client",
   "main": "index.js",
   "scripts": {
-     "lint": "standard",
+    "lint": "standard",
     "test": "NODE_ENV=test mocha test/index.js",
     "test-cli": "NODE_ENV=test mocha test/cli.js",
     "test-cov": "NODE_ENV=test istanbul cover _mocha -- -u exports -R spec test/index.js"
   },
   "author": "alantrrs",
   "dependencies": {
+    "http-errors": "^1.5.0",
     "node-fetch": "^1.6.0"
   },
   "devDependencies": {
