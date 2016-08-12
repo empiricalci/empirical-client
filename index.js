@@ -59,7 +59,7 @@ exports.createExperiment = function (payload) {
   })
 }
 
-exports.updateBuild = function (experimentId, payload) {
+exports.updateExperiment = function (experimentId, payload) {
   return fetch(`${host}/api/v1/x/${experimentId}`, {
     method: 'PATCH',
     headers: headers,
