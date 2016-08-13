@@ -8,9 +8,9 @@ machine:
 dependencies:
   override:
     - npm install
-    - docker login -u $DOCKER_USER -p $DOCKER_PASS
-    - docker run empiricalci/empirical
-    - docker run  rethink
+    - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    - docker run -d -P --name rethink1 rethinkdb
+    - docker run -d -p 1337 --net host --entrypoint=npm empiricalci/empirical run test-server
 test:
   override:
     - npm run lint
