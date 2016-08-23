@@ -31,6 +31,15 @@ exports.getProfile = function () {
   })
 }
 
+exports.getAuthToken = function () {
+  return fetch(`${host}/api/v1/profile/auth_token`, {
+    headers: headers
+  }).then(function (response) {
+    if (!response.ok) return Promise.reject(httpError(response.status, `Failed to get auth token: ${response.statusText}`))
+    return response.json()
+  })
+}
+
 exports.getKeys = function (projectId) {
   return fetch(`${host}/api/v1/projects/${projectId}/keys`, {
     headers: headers

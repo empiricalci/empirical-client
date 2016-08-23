@@ -14,6 +14,13 @@ describe('Client', function () {
       done()
     }).catch(done)
   })
+  it('should get the github auth token', function (done) {
+    client.getAuthToken().then(function (data) {
+      assert.equal(data.username, 'empirical-bot')
+      assert(data.token)
+      done()
+    }).catch(done)
+  })
   it('should get an experiment', function (done) {
     client.getExperiment('empirical-bot/my-solver/my-solver/myBuild')
     .then(function (experiment) {
