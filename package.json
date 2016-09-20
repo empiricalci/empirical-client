@@ -11,6 +11,8 @@
   "author": "alantrrs",
   "dependencies": {
     "http-errors": "^1.5.0",
+    "md5": "^2.2.1",
+    "mime-types": "^2.1.11",
     "node-fetch": "^1.6.0"
   },
   "devDependencies": {

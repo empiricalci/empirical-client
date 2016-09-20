@@ -36,6 +36,9 @@ describe('Client', function () {
     client.createExperiment({
       project_id: 'empirical-bot/my-solver',
       protocol: 'my-solver',
+      environment: {
+        build: '.'
+      },
       head_sha: 'ff396b8f154c3488f40460c0bedbf951aa06949c'
     }).then(function (experiment) {
       assert(experiment.id)
@@ -50,6 +53,9 @@ describe('Client', function () {
     client.createExperiment({
       project_id: 'empirical-bot/my-solver',
       protocol: 'my-new-protocol',
+      environment: {
+        build: '.'
+      },
       head_sha: 'ff396b8f154c3488f40460c0bedbf951aa06949c'
     }).then(function (experiment) {
       assert(experiment.id)
@@ -89,5 +95,12 @@ describe('Client', function () {
       assert.equal(err.status, 401)
       done()
     })
+  })
+  it('should upload logs', function (done) {
+    client.uploadLogs('./test/test-logs.log', `empirical-bot/my-solver/my-solver/${experimentId}`)
+    .then(function (experiment) {
+      assert(experiment.logs)
+      done()
+    }).catch(done)
   })
 })

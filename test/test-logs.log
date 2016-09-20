@@ -1,0 +1,40 @@
+[37m[1mEXPERIMENT:[22m[39m
+[32menvironment: [39m
+  [32mbuild: [39m.
+  [32mtag: [39m  mnist
+[32mdataset: [39m
+  [32mresources: [39m
+    [32mmnist.pkl.gz: [39m
+      [32murl: [39m https://raw.githubusercontent.com/mnielsen/neural-networks-and-deep-learning/master/data/mnist.pkl.gz
+      [32mhash: [39mf11bb9e41d6c1b6c124aa38fd605497bdcfe2ee08cf7c2bb5a41ab5d759e1416
+[32mid: [39m         mnist-rkwmt8A2
+[32mtype: [39m       standalone
+[32mdirectory: [39m  /tmp/empirical/workspaces/mnist-rkwmt8A2
+[37m[1mBUILD:[22m[39m
+{"stream":"Step 1 : FROM python:2.7\n"}
+{"stream":" ---\u003e c8d39405b1dd\n"}
+{"stream":"Step 2 : RUN pip install numpy\n"}
+{"stream":" ---\u003e Using cache\n"}
+{"stream":" ---\u003e 318d78d3d8cc\n"}
+{"stream":"Step 3 : COPY . /code\n"}
+{"stream":" ---\u003e Using cache\n"}
+{"stream":" ---\u003e 9244cb8dcf4e\n"}
+{"stream":"Step 4 : ENTRYPOINT python /code/main.py\n"}
+{"stream":" ---\u003e Using cache\n"}
+{"stream":" ---\u003e dfaa79a2371a\n"}
+{"stream":"Successfully built dfaa79a2371a\n"}
+[37m[1mDATASET:[22m[39m
+[32mmnist.pkl.gz: [39m
+  [32mpath: [39m  /tmp/empirical/data/f11bb9e41d6c1b6c124aa38fd605497bdcfe2ee08cf7c2bb5a41ab5d759e1416
+  [32mcached: [39m[32mtrue[39m
+  [32mhash: [39m  f11bb9e41d6c1b6c124aa38fd605497bdcfe2ee08cf7c2bb5a41ab5d759e1416
+  [32mvalid: [39m [32mtrue[39m
+[37m[1mRUN:[22m[39m
+Epoch 0 training complete
+Accuracy on training data: 44666 / 50000
+
+[37m[1mRESULTS:[22m[39m
+[32moverall: [39m
+  [32mmetric: [39mAccuracy
+  [32mvalue: [39m [34m0.89332[39m
+[32m[1mSuccess[22m[39m
