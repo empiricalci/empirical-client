@@ -84,12 +84,13 @@ exports.updateExperiment = function (experimentId, payload) {
   })
 }
 
-function requestUpload (fileName, checksum, contentType, contentLength) {
+function requestUpload (filePath, checksum, contentType, contentLength, experimentId) {
   return fetch(`${host}/api/v1/data/uploadRequest`, {
     method: 'POST',
     headers: headers,
     body: JSON.stringify({
-      file_name: fileName,
+      filePath: filePath,
+      experimentId: experimentId,
       checksum: checksum,
       contentType: contentType,
       contentLength: contentLength
@@ -100,18 +101,20 @@ function requestUpload (fileName, checksum, contentType, contentLength) {
   })
 }
 
-exports.upload = function (filePath, fileName) {
+exports.upload = function (filePath, experimentId, workspacePath) {
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, function (err, data) {
       if (err) reject(err)
       var checksum = md5(data)
       var contentLength = fs.statSync(filePath).size
       var contentType = mime.contentType(path.extname(filePath))
+      filePath = workspacePath ? path.relative(workspacePath, filePath) : filePath
       requestUpload(
-        fileName || path.basename(filePath),
+        filePath,
         checksum,
         contentType,
-        contentLength
+        contentLength,
+        experimentId
       )
       .then(function (asset) {
         return fetch(asset.signedUrl, {
@@ -133,7 +136,7 @@ exports.upload = function (filePath, fileName) {
 
 exports.uploadLogs = function (filePath, experimentId) {
   // Upload logs
-  return exports.upload(filePath)
+  return exports.upload(filePath, experimentId)
   .then(function (logs) {
     // Associates logs with experiment
     return exports.updateExperiment(experimentId, {
