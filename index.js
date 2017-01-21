@@ -54,7 +54,7 @@ exports.getKeys = function (projectId) {
 }
 
 exports.getExperiment = function (experimentId) {
-  return fetch(`${host}/api/v1/x/${experimentId}`, {
+  return fetch(`${host}/api/v1/${experimentId}`, {
     headers: headers
   }).then(function (response) {
     if (!response.ok) return Promise.reject(httpError(response.status, `Failed to get experiment: ${response.statusText}`))
@@ -62,8 +62,8 @@ exports.getExperiment = function (experimentId) {
   })
 }
 
-exports.createExperiment = function (payload) {
-  return fetch(`${host}/api/v1/experiments`, {
+exports.createExperiment = function (projectId, payload) {
+  return fetch(`${host}/api/v1/${projectId}/x`, {
     method: 'POST',
     headers: headers,
     body: JSON.stringify(payload)
@@ -74,7 +74,7 @@ exports.createExperiment = function (payload) {
 }
 
 exports.updateExperiment = function (experimentId, payload) {
-  return fetch(`${host}/api/v1/x/${experimentId}`, {
+  return fetch(`${host}/api/v1/${experimentId}`, {
     method: 'PATCH',
     headers: headers,
     body: JSON.stringify(payload)
