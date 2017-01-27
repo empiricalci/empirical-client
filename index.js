@@ -100,7 +100,7 @@ function requestUpload (url, data, type) {
   })
 }
 
-exports.upload = function (endpoint, filePath, workspacePath, artifactType = 'data') {
+exports.upload = function (endpoint, filePath, workspacePath, artifactType) {
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, function (err, data) {
       if (err) reject(err)
@@ -108,6 +108,7 @@ exports.upload = function (endpoint, filePath, workspacePath, artifactType = 'da
       var contentLength = fs.statSync(filePath).size
       var contentType = mime.contentType(path.extname(filePath))
       filePath = workspacePath ? path.relative(workspacePath, filePath) : filePath
+      artifactType = artifactType || 'data'
       requestUpload(`${host}/api/v1/${endpoint}/${artifactType}`, {
         filePath,
         checksum,
