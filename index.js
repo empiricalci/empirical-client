@@ -84,16 +84,15 @@ exports.updateExperiment = function (experimentId, payload) {
   })
 }
 
-function requestUpload (filePath, checksum, contentType, contentLength, experimentId) {
-  return fetch(`${host}/api/v1/data/uploadRequest`, {
+function requestUpload (url, data, type) {
+  return fetch(url, {
     method: 'POST',
     headers: headers,
     body: JSON.stringify({
-      filePath: filePath,
-      experimentId: experimentId,
-      checksum: checksum,
-      contentType: contentType,
-      contentLength: contentLength
+      filePath: data.filePath,
+      checksum: data.checksum,
+      contentType: data.contentType,
+      contentLength: data.contentLength
     })
   }).then(function (response) {
     if (!response.ok) return Promise.reject(httpError(response.status, `Failed to create upload request: ${response.statusText}`))
@@ -101,7 +100,7 @@ function requestUpload (filePath, checksum, contentType, contentLength, experime
   })
 }
 
-exports.upload = function (filePath, experimentId, workspacePath) {
+exports.upload = function (endpoint, filePath, workspacePath, artifactType = 'data') {
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, function (err, data) {
       if (err) reject(err)
@@ -109,13 +108,12 @@ exports.upload = function (filePath, experimentId, workspacePath) {
       var contentLength = fs.statSync(filePath).size
       var contentType = mime.contentType(path.extname(filePath))
       filePath = workspacePath ? path.relative(workspacePath, filePath) : filePath
-      requestUpload(
+      requestUpload(`${host}/api/v1/${endpoint}/${artifactType}`, {
         filePath,
         checksum,
         contentType,
-        contentLength,
-        experimentId
-      )
+        contentLength
+      })
       .then(function (asset) {
         return fetch(asset.signedUrl, {
           method: 'PUT',
@@ -125,7 +123,7 @@ exports.upload = function (filePath, experimentId, workspacePath) {
             'Content-Type': contentType
           }
         }).then(function (response) {
-          if (!response.ok) return reject(httpError(response.status, `Failed to upload to s3: ${response.statusText}`))
+          if (!response.ok) return reject(httpError(response.status, `Failed to upload file: ${response.statusText}`))
           resolve(asset)
         })
       })
@@ -134,14 +132,6 @@ exports.upload = function (filePath, experimentId, workspacePath) {
   })
 }
 
-exports.uploadLogs = function (filePath, experimentId) {
-  // Upload logs
-  return exports.upload(filePath, experimentId)
-  .then(function (logs) {
-    // Associates logs with experiment
-    return exports.updateExperiment(experimentId, {
-      logs: logs.id
-    })
-  })
+exports.uploadLogs = function (endpoint, filePath) {
+  return exports.upload(endpoint, filePath, undefined, 'logs')
 }
-
