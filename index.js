@@ -84,12 +84,13 @@ exports.updateExperiment = function (experimentId, payload) {
   })
 }
 
-function requestUpload (url, data, type) {
+function requestUpload (url, data) {
   return fetch(url, {
     method: 'POST',
     headers: headers,
     body: JSON.stringify({
       filePath: data.filePath,
+      isDirectory: data.isDirectory,
       checksum: data.checksum,
       contentType: data.contentType,
       contentLength: data.contentLength
@@ -100,17 +101,19 @@ function requestUpload (url, data, type) {
   })
 }
 
-exports.upload = function (endpoint, filePath, workspacePath, artifactType) {
+exports.upload = function (experiment, params) {
+  if (!params) return Promise.reject(new Error('Failed to upload: No params were given'))
   return new Promise(function (resolve, reject) {
-    fs.readFile(filePath, function (err, data) {
+    fs.readFile(params.filePath, function (err, data) {
       if (err) reject(err)
       var checksum = md5(data)
-      var contentLength = fs.statSync(filePath).size
-      var contentType = mime.contentType(path.extname(filePath))
-      filePath = workspacePath ? path.relative(workspacePath, filePath) : filePath
-      artifactType = artifactType || 'data'
-      requestUpload(`${host}/api/v1/${endpoint}/${artifactType}`, {
-        filePath,
+      var contentLength = fs.statSync(params.filePath).size
+      var contentType = mime.contentType(path.extname(params.filePath)) || 'application/octet-stream'
+      params.displayPath = params.displayPath || params.filePath
+      const artifactType = params.artifactType === 'logs' ? 'logs' : 'data'
+      requestUpload(`${host}/api/v1/${experiment}/${artifactType}`, {
+        filePath: params.displayPath,
+        isDirectory: params.isDirectory,
         checksum,
         contentType,
         contentLength
@@ -134,5 +137,8 @@ exports.upload = function (endpoint, filePath, workspacePath, artifactType) {
 }
 
 exports.uploadLogs = function (endpoint, filePath) {
-  return exports.upload(endpoint, filePath, undefined, 'logs')
+  return exports.upload(endpoint, {
+    filePath: filePath,
+    artifactType: 'logs'
+  })
 }
