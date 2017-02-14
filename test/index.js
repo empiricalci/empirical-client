@@ -21,55 +21,52 @@ describe('Client', function () {
       done()
     }).catch(done)
   })
+  it('should create a project', function (done) {
+    client.createProject('empirical-bot/myProject')
+    .then(function (project) {
+      assert.equal(project.owner, 'empirical-bot')
+      assert.equal(project.name, 'myProject')
+      done()
+    }).catch(done)
+  })
   it('should get an experiment', function (done) {
-    client.getExperiment('empirical-bot/my-solver/my-solver/myBuild')
+    client.getExperiment('empirical-bot/my-solver/x/myBuild')
     .then(function (experiment) {
       assert(experiment.protocol)
-      assert(experiment.protocol.project)
-      assert(experiment.version)
-      assert(!experiment.protocol.project.repo.private_key, 'Should not expose private key!')
       done()
     }).catch(done)
   })
   var experimentId
-  it('should create an experiment for an existing protocol', function (done) {
-    client.createExperiment({
-      project_id: 'empirical-bot/my-solver',
-      protocol: 'my-solver',
-      environment: {
-        build: '.'
-      },
-      head_sha: 'ff396b8f154c3488f40460c0bedbf951aa06949c'
-    }).then(function (experiment) {
-      assert(experiment.id)
-      experimentId = experiment.id
-      assert.equal(experiment.author, 'empirical-bot')
-      assert.equal(experiment.version_id, 'Ny1OY60ag')
-      assert.equal(experiment.protocol_id, 'empirical-bot/my-solver/my-solver')
-      done()
-    }).catch(done)
-  })
-  it('should create a protocol if it doesn\'t exists ', function (done) {
-    client.createExperiment({
-      project_id: 'empirical-bot/my-solver',
+  it('should create an experiment ', function (done) {
+    client.createExperiment('empirical-bot/my-solver', {
       protocol: 'my-new-protocol',
+      message: 'my-message',
+      status: 'failed',
       environment: {
         build: '.'
       },
-      head_sha: 'ff396b8f154c3488f40460c0bedbf951aa06949c'
+      source: {
+        repo: 'https://github.com/empirical-bot/my-solver',
+        commit: 'ff396b8f154c3488f40460c0bedbf951aa06949c'
+      }
     }).then(function (experiment) {
+      experimentId = experiment.id
       assert(experiment.id)
+      assert.equal(experiment.project_id, 'empirical-bot/my-solver')
       assert.equal(experiment.author, 'empirical-bot')
-      assert.equal(experiment.version_id, 'Ny1OY60ag')
-      assert.equal(experiment.protocol_id, 'empirical-bot/my-solver/my-new-protocol')
+      assert.equal(experiment.protocol, 'my-new-protocol')
       done()
     }).catch(done)
   })
   it('shouldn\'t create an experiment for a project you don\'t have access to', function (done) {
-    client.createExperiment({
-      project_id: 'empirical-tester/hello-world',
+    client.createExperiment('empirical-tester/hello-world', {
       protocol: 'my-solver',
-      head_sha: 'ff396b8f154c3488f40460c0bedbf951aa06949c'
+      message: 'something',
+      status: 'failed',
+      source: {
+        repo: 'empirical-tester/hello-world',
+        commit: 'ff396b8f154c3488f40460c0bedbf951aa06949c'
+      }
     }).then(function (experiment) {
       done(new Error('An experiment was created'))
     }).catch(function (err) {
@@ -78,7 +75,7 @@ describe('Client', function () {
     })
   })
   it('should update an experiment', function (done) {
-    client.updateExperiment(`empirical-bot/my-solver/my-solver/${experimentId}`, {
+    client.updateExperiment(`empirical-bot/my-solver/x/${experimentId}`, {
       status: 'success'
     }).then(function (experiment) {
       assert.equal(experiment.status, 'success')
@@ -87,7 +84,7 @@ describe('Client', function () {
     }).catch(done)
   })
   it('shouldn\'t be able to update another user\'s experiment', function (done) {
-    client.updateExperiment('empirical-tester/hello-world/hello-world/myExperiment', {
+    client.updateExperiment('empirical-tester/hello-world/x/myExperiment', {
       status: 'failed'
     }).then(function (experiment) {
       done(new Error('Shouldn\'t be able to update another users\'s experiment'))
@@ -97,9 +94,9 @@ describe('Client', function () {
     })
   })
   it('should upload logs', function (done) {
-    client.uploadLogs('./test/test-logs.log', `empirical-bot/my-solver/my-solver/${experimentId}`)
-    .then(function (experiment) {
-      assert(experiment.logs)
+    client.uploadLogs(`empirical-bot/my-solver/x/${experimentId}`, './test/test-logs.log')
+    .then(function (asset) {
+      assert.equal(asset.experimentId, experimentId)
       done()
     }).catch(done)
   })

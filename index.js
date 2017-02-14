@@ -53,6 +53,20 @@ exports.getKeys = function (projectId) {
   })
 }
 
+exports.createProject = function (projectId) {
+  return fetch(`${host}/api/v1/projects`, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify({
+      owner: projectId.split('/')[0],
+      name: projectId.split('/').pop()
+    })
+  }).then(function (response) {
+    if (!response.ok) return Promise.reject(httpError(response.status, `Failed to create project: ${response.statusText}`))
+    return response.json()
+  })
+}
+
 exports.getExperiment = function (experimentId) {
   return fetch(`${host}/api/v1/${experimentId}`, {
     headers: headers
