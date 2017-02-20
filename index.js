@@ -123,7 +123,7 @@ exports.upload = function (experiment, params) {
       var checksum = md5(data)
       var contentLength = fs.statSync(params.filePath).size
       var contentType = mime.contentType(path.extname(params.filePath)) || 'application/octet-stream'
-      params.displayPath = params.displayPath || params.filePath
+      params.displayPath = params.displayPath || path.basename(params.filePath)
       const artifactType = params.artifactType === 'logs' ? 'logs' : 'data'
       requestUpload(`${host}/api/v1/${experiment}/${artifactType}`, {
         filePath: params.displayPath,
