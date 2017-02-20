@@ -100,4 +100,22 @@ describe('Client', function () {
       done()
     }).catch(done)
   })
+  const testResult = {
+    name: 'my-table',
+    type: 'table',
+    data: [['Country', 'Year', 'Population'],
+      ['United States', 2000, 282200000],
+      ['Canada', 2000, 27790000],
+      ['United States', 2005, 295500000],
+      ['Canada', 2005, 32310000],
+      ['United States', 2010, 309000000],
+      ['Canada', 2010, 34000000]
+    ]
+  }
+  it('should create a result', function (done) {
+    client.createResult(`empirical-bot/my-solver/x/${experimentId}`, testResult).then(function (response) {
+      assert.equal(response.status, 'success')
+      done()
+    }).catch(done)
+  })
 })

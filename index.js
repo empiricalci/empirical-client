@@ -156,3 +156,14 @@ exports.uploadLogs = function (endpoint, filePath) {
     artifactType: 'logs'
   })
 }
+
+exports.createResult = function (experimentPath, result) {
+  return fetch(`${host}/api/v1/${experimentPath}/results`, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(result)
+  }).then(function (response) {
+    if (!response.ok) return Promise.reject(httpError(response.status, `Failed to create result: ${response.statusText}`))
+    return response.json()
+  })
+}
